@@ -239,11 +239,14 @@
     if (! opts) opts = {};
     var w = $(template);
 
-    var nam = opts.name || opts.title || target || lnk;
-    if (lnk) { 
-      nam = lnk.replace(/^https?:\/\/[^\/]+\//,'').replace(/\.\w+$/,'')
-        .replace(/[^A-Za-z0-9]/g,'');
+    var nam = opts.name;
+    if (! nam && lnk) { 
+      var rv = lnk.match(/([^\/]+)$/);
+      if (rv) nam = rv[1].replace(/\.[^\.]+$/,'');
     }
+
+    if (! nam) nam = opts.title || target;
+    if (nam) nam = nam.replace(/[^A-Za-z0-9]/g,'');
     if (! nam) nam = 'default';
     w.addClass('windowname_' + nam);
 
