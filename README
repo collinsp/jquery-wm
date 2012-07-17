@@ -1,1 +1,15 @@
-see index.html
+/*
+ * jquery.WM.js - Window Manager for jQuery.
+ *
+ * Requires a decent browser (>=IE7,firefox,chrome,etc)
+ *
+ * Copyright (c) 2009 Philip Collins
+ * Licensed under the MIT License:
+ * http://www.opensource.org/licenses/mit-license.php
+ * 
+ * $Version: 2012.07.17
+*/
+
+See index.html for instructions and demo.
+
+
