@@ -2,16 +2,18 @@
 <html>
 <head>
 <title>Jquery Window Manager Example</title>
+<link rel=StyleSheet href="jquery-wm/main.css" type="text/css" media=screen>
+<script src=//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js></script>
+<script src=jquery-wm/main.js></script>
 
-<script type='text/javascript' src='../jquery.js'></script>
-
-<link rel=StyleSheet href="jquery-wm.css" type="text/css" media=screen>
-<script type='text/javascript' src='jquery-wm.min.js'></script>
 
 <style type=text/css>
-body {
+html, body {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  margin: 0;
   background-color: #ccc;
-  margin: 0 15%;
 }
 h3 {
   color: #242;
@@ -23,11 +25,12 @@ pre,textarea {
   color: #000099;
 }
 textarea {
-  width: 99%;
+  width: 90%;
   height: 200px;
+  padding: 2%;
 }
 h3 { margin-bottom: 4px; }
-p,pre { margin: 0; }
+p,pre { margin: 0; padding: 6px; }
 p {
   font-size: smaller; 
   color: #222;
@@ -35,117 +38,102 @@ p {
 button {
   font-weight: bold;
 }
+#page {
+  max-width: 600px;
+  padding: 20px;
+  margin: auto;
+  margin-top: 1em;
+  border: 2px outset #aaa;
+  background-color: white;
+  border-radius: 10px;
+}
 </style>
 
-
-<script type='text/javascript'>
+<script>
 $(function(){
   $('#tryit').click(function(){
     $('head').append('<style type=text/css>'+$(this).prev().val()+'<\/style>');
+    $().WM('open');
   });
 });
 </script>
 </head>
+
 <body>
-  <pre style="font-size: 16px;">
-/*
- * jquery.WM.js - Window Manager for jQuery.
- *
- * Requires a decent browser (&gt;=IE7,firefox,chrome,etc)
- *
- * Copyright (c) 2009 Philip Collins
- * Licensed under the MIT License:
- * http://www.opensource.org/licenses/mit-license.php
- * 
- * $Version: 2012.07.17
- */
-  </pre>
 
-  <h3>Download at github</h3> 
-  <p><a href=https://github.com/collinsp/jquery-wm>https://github.com/collinsp/jquery-wm</a>
+<div id=page>
+<h1>jquery-wm - child windows in your web browser</h1>
+
+<h3>Download at github</h3> 
+<p><a href=https://github.com/collinsp/jquery-wm>https://github.com/collinsp/jquery-wm</a>
   
+<h3>Examples</h3>
+<p>Click me to open a blank window. <button type=button onclick="var w = $().WM('open'); w.find('.windowcontent').html('some html content here');">new window</button>
 
-  <h3>Usage</h3>
-  <pre>
-  &lt;!DOCTYPE html&gt;
-  &lt;html&gt;
-  &lt;head&gt;
+<p>Click me to open a mini window <button type=button onclick="var w = $().WM('open', 'http://slashdot.org'); w.addClass('autohide');">new window</button>
 
-  &lt;!-- add to your head --&gt;
-  &lt;link rel=StyleSheet href="<a href=jquery-wm.css target="_child">jquery-wm.css</a>" TYPE="text/css" MEDIA=screen&gt;
-  &lt;script type='text/javascript' src='jquery.js'&gt;&lt;/script&gt;
-  &lt;script type='text/javascript' src='<a href=jquery-wm.min.js target="_child">jquery-wm.min.js</a>'&gt;&lt;/script&gt;
+<p>
+Here's some anchors links that have a class=jquery-wm attribute. These will open up in child windows.
+<a href=http://slashdot.org class=jquery-wm>slashdot</a>,
+<a href=http://forums.slickdeals.net class=jquery-wm>slickdeals</a>
+<a href=index.html class=jquery-wm>clone this page</a>
 
-  &lt;/head&gt;
-  </pre>
+<p>
+Open child windows using jquery object.
+<pre>
+var $w = $().WM('open','http://retrogames.com');
 
-  <h3>Examples</h3>
+// other jquery extensions that can be used on children windows
+$w.WM('maximize');
+$w.WM('minimize');
+$w.WM('raise');
+$w.WM('close');
 
-  <p>Click me to open a blank window. <button type=button onclick="var w = $.WM_open(); w.find('.windowcontent').html('some html content here');">new window</button>
+// open a window and manipulate the window content
+var $w = $().WM('open');
+$w.find('.titlebartext').text('foo');
+$w.find('.windowcontent').html('here is some content');
+</pre>
 
-  <p>Click me to open a mini window <button type=button onclick="var w = $.WM_open('http://slashdot.org'); w.addClass('autohide');">new window</button>
-
-  <p>
-    Here's some anchors links that have a target="_child" attribute. They should open up as child windows.
-    <a href=http://slashdot.org target="_child">slashdot</a>,
-    <a href=http://forums.slickdeals.net target="_child" title="slickdeals">slickdeals</a>
-    <a href=index.html target="_child">clone this page</a>
-
-  <p>
-    Open child windows using jquery object.
-    <pre>
-      var $w = $.WM_open('http://retrogames.com');
-
-      // other jquery extensions that can be used on children windows
-      $w.WM_maximize();
-      $w.WM_minimize();
-      $w.WM_raise();
-      $w.WM_close();
-
-      // open a window and manipulate the window content
-      var $w = $.WM_open();
-      $w.find('.titlebartext').text('foo');
-      $w.find('.windowcontent').html('here is some content');
-    </pre>
-
-  <h3>Stylize with CSS</h3> 
-  <p>
-    <textarea>
-      .window {
-        background-color: purple;
-        border-width: 4px;
-        border-color: yellow;
-        -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
-        filter: alpha(opacity=20);
-        opacity: .2;
-      }
-      .windowtitlebar {
-        background-color: black;
-        color: green;
-      }
-      .window.focused {
-        background-color: purple;
-        border-width: 8px;
-        border-color: green;
-        -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=90)";
-        filter: alpha(opacity=90);
-        opacity: .9;
-      }
-      .window.focused .windowtitlebar {
-        background-color: orange;
-        color: red;
-        text-decoration: blink;
-      }
-      .window.focused .windowcontent {
-        background-color: white;
-        -webkit-border-radius: 10px;
-        -moz-border-radius: 10px;
-        border-radius: 10px;
-      }
-      .window .horizbuts * {
-        background-color: yellow;
-      }
-    </textarea>
-    <button type=button id=tryit>try it</button>
+<h3>Stylize with CSS</h3> 
+<p>
+<textarea>
+  .window {
+    background-color: purple;
+    border-width: 4px;
+    border-color: yellow;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+    filter: alpha(opacity=20);
+    opacity: .2;
+  }
+  .windowtitlebar {
+    background-color: black;
+    color: green;
+  }
+  .window.focused {
+    background-color: purple;
+    border-width: 8px;
+    border-color: green;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=90)";
+    filter: alpha(opacity=90);
+    opacity: .9;
+  }
+  .window.focused .windowtitlebar {
+    background-color: orange;
+    color: red;
+    text-decoration: blink;
+  }
+  .window.focused .windowcontent {
+    background-color: white;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+  }
+  .window .horizbuts * {
+    background-color: yellow;
+  }
+</textarea>
+<button type=button id=tryit>try it</button>
+</div>
 </body>
 </html>

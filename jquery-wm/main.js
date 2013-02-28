@@ -38,7 +38,7 @@
   })
   .mouseup(function(){
     resizerP.hide();
-    $win.css(resizerPos).WM_ensure_viewable();
+    $win.css(resizerPos).WM('ensure_viewable');
     $win = undefined;
     return false;
   });
@@ -80,7 +80,7 @@
   })
   .mouseup(function(){
     moverP.hide();
-    $win.css(moverPos).WM_ensure_viewable().removeClass('moving');
+    $win.css(moverPos).WM('ensure_viewable').removeClass('moving');
     $win = undefined;
     return false;
   });
@@ -101,7 +101,7 @@
     }
 
     lastClick = t1;
-    $win.WM_raise();
+    $win.WM('raise');
     moverPos = getPos($win);
     moverPos.width = $win.width();
     moverPos.height = $win.height();
@@ -133,20 +133,22 @@
   };
 
   var cancelBubble = function(){ return false; };
-  var onClickWindow = function(){$(this).closest('.window').WM_raise();return true;};
-  var onClickMinimizeBut = function(){$(this).closest('.window').WM_minimize();return false;};
-  var onClickRestoreBut = function(){$(this).closest('.window').WM_restore();return false;};
-  var onClickMaximizeBut = function(){$(this).closest('.window').WM_maximize();return false;};
-  var onClickCloseBut = function(){$(this).closest('.window').WM_close();return false;};
+  var onClickWindow = function(){$(this).closest('.window').WM('raise');return true;};
+  var onClickMinimizeBut = function(){$(this).closest('.window').WM('minimize');return false;};
+  var onClickRestoreBut = function(){$(this).closest('.window').WM('restore');return false;};
+  var onClickMaximizeBut = function(){$(this).closest('.window').WM('maximize');return false;};
+  var onClickCloseBut = function(){$(this).closest('.window').WM('close');return false;};
   var onDblClickTitlebar=function(){
     var w = $(this).closest('.window');
-    if (w.hasClass('maximized')) w.WM_restore();
-    else w.WM_maximize();
+    if (w.hasClass('maximized')) w.WM('restore');
+    else w.WM('maximize');
     return false;
   };
   moverP[0].onselectstart=resizerP[0].onselectstart=cancelBubble;
 
-  $.fn.WM_ensure_viewable=function(){
+    
+  var methods = {};
+  methods.ensure_viewable=function(){
     this.filter('.window').each(function(){
       var w = $(this);
       var p = getPos(w);
@@ -162,7 +164,7 @@
     return this;
   };
 
-  $.fn.WM_minimize = function() {
+  methods.minimize = function() {
     this.each(function(){
       var w = $(this);
       if (! w.is('.window')) return true;
@@ -173,11 +175,11 @@
        .removeClass('focused')
        .addClass('minimized'); 
     });
-    $.WM_retileMin();
+    $().WM('retileMin');
     return this;
   };
 
-  $.WM_retileMin=function(){
+  methods.retileMin=function(){
     $('.window.minimized').each(function(i){
       var b=i*(minH+2)
       if ($(this).css('bottom')!=b)$(this).css('bottom',b);
@@ -185,7 +187,7 @@
     return this;
   };
 
-  $.fn.WM_maximize = function() {
+  methods.maximize = function() {
     var retile;
     this.each(function(){
       var w = $(this);
@@ -196,13 +198,13 @@
       }
       savePos(w);
       w.css({left:0,top:0,bottom:0,right:0,width:'auto',height:'auto'})
-       .WM_raise().addClass('maximized'); 
+       .WM('raise').addClass('maximized'); 
     });
-    if (retile) $.WM_retileMin();
+    if (retile) $().WM('retileMin');
     return this;
   };
 
-  $.fn.WM_restore = function() {
+  methods.restore = function() {
     var retile;
     this.each(function(){
       var w = $(this);
@@ -216,14 +218,14 @@
       }
       w.css(w.data('oldPos'))
        .removeData('oldPos')
-       .WM_ensure_viewable()
+       .WM('ensure_viewable');
     });
-    if (retile) $.WM_retileMin();
-    this.WM_raise();
+    if (retile) $().WM('retileMin');
+    this.WM('raise');
     return this;
   };
 
-  $.fn.WM_raise = function() {
+  methods.raise = function() {
     var w = this.filter('.window:first');
     if (w.length==0||w.hasClass('focused')) return this;
     $(".window.focused").removeClass('focused');
@@ -231,11 +233,11 @@
     return this;
   };
 
-  $.fn.WM_close = function() {
+  methods.close = function() {
     return this.filter('.window').remove();
   };
 
-  $.WM_open=function(lnk,target,opts) {
+  methods.open = function(lnk,target,opts) {
     if (! opts) opts = {};
     var w = $(template);
 
@@ -298,23 +300,31 @@
     // else let jquery append it
     else w.find('.windowcontent').append(lnk);
 
-    w.WM_raise();
+    w.WM('raise');
     return w;
   };
 
-  // if anchor clicked having target=_child open link as child window
-  $(document).delegate('a','click',function(e){
-    if ((!e.button||e.button==0) && this.target.match(/^\_child\b/)) {
-      var t = $(this);
-      window.top.jQuery.WM_open(this.href,this.target,
-          {title:t.attr('title')||t.text().substr(0,100)});
-      return false;
+  $.fn.WM = function(method) {
+    if (method in methods) {
+      return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+    } else if (typeof method === 'object' || ! method) {
+      return methods.init.apply(this, arguments);
+    } else {
+      $.error('Method ' +  method + ' does not exist on jQuery.colorramp');
     }
-    return true;
+  };
+
+  // if anchor clicked having target=_child open link as child window
+  $(document).delegate('a.jquery-wm','click',function(e){
+    if (e.button > 0) return true;
+    var t = $(this);
+    window.top.jQuery().WM('open',this.href,this.target,
+      {title:t.attr('title')||t.text().substr(0,100)});
+    return false;
   });
 
   // make sure all child windows are on screen when window resizes
-  $(window).resize(function(){$('.window').WM_ensure_viewable();return true;});
+  $(window).resize(function(){$('.window').WM('ensure_viewable');return true;});
 
   $(function(){
     if (isIE) $(document.body).addClass('IE');
