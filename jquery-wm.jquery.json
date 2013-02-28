@@ -1,0 +1,24 @@
+{
+    "name": "jquery-wm",
+    "version": "0.0.3",
+    "title": "jquery-wm",
+    "description": "jquery-wm is a window manager in an html page",
+    "author": {
+        "name": "Philip Collins"
+    },
+    "keywords": [
+        "widget"
+    ],
+    "homepage": "https://github.com/collinsp/jquery-wm/",
+    "download": "https://github.com/collinsp/jquery-wm/tarball/master",
+    "demo": "http://x.sr.unh.edu/jquery-wm",
+    "licenses": [
+        {
+            "type": "MIT license (MIT)",
+            "url": "http://http://opensource.org/licenses/MIT"
+        }
+    ],
+    "dependencies": {
+        "jquery": ">=1.5"
+    }
+}
