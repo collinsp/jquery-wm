@@ -315,7 +315,7 @@
   };
 
   // if anchor clicked having target=_child open link as child window
-  $(document).delegate('a.jquery-wm','click',function(e){
+  $(document).on('click','a.jquery-wm,a[target=_child]',function(e){
     if (e.button > 0) return true;
     var t = $(this);
     window.top.jQuery().WM('open',this.href,this.target,
