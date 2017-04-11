@@ -3,7 +3,7 @@
 <head>
 <title>Jquery Window Manager Example</title>
 <link rel=StyleSheet href="jquery-wm/main.css" type="text/css" media=screen>
-<script src=//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js></script>
+<script src=ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js></script>
 <script src=jquery-wm/main.js></script>
 
 
@@ -70,12 +70,11 @@ $(function(){
 <h3>Examples</h3>
 <p>Click me to open a blank window. <button type=button onclick="var w = $().WM('open'); w.find('.windowcontent').html('some html content here');">new window</button>
 
-<p>Click me to open a mini window <button type=button onclick="var w = $().WM('open', 'http://slashdot.org'); w.addClass('autohide');">new window</button>
+<p>Click me to open a mini window <button type=button onclick="var w = $().WM('open', 'https://www.reddit.com/'); w.addClass('autohide');">new window</button>
 
 <p>
 Here's some anchors links that have a class=jquery-wm attribute. These will open up in child windows.
-<a href=http://slashdot.org class=jquery-wm>slashdot</a>,
-<a href=http://forums.slickdeals.net class=jquery-wm>slickdeals</a>
+<a href=https://reddit.com class=jquery-wm>reddit</a>,
 <a href=index.html class=jquery-wm>clone this page</a>
 
 <p>
